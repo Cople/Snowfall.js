@@ -1,12 +1,13 @@
 /*!
- * Snowfall.js v1.0
- * @author Cople http://jquery.com/
+ * Snowfall.js v1.0 (http://cople.github.io/Snowfall.js/)
  */
 
-var Snowfall = (function(window, document, undefined) {
+var Snowfall = (function (window, document, undefined) {
+
+    "use strict";
 
     var $body = document.body,
-	    winWidth = window.innerWidth,
+        winWidth = window.innerWidth,
         winHeight = window.innerHeight,
         defaultOptions = {
             minSize: 10,
@@ -14,8 +15,8 @@ var Snowfall = (function(window, document, undefined) {
             type: "text",
             content: "&#10052",
             fadeOut: true,
-            interval: 200,
-            autoplay: true
+            autoplay: true,
+            interval: 200
         };
 
     function cssPrefix(propertyName) {
@@ -43,7 +44,7 @@ var Snowfall = (function(window, document, undefined) {
             "OTransition": "oTransitionEnd",
             "Moztransition": "transitionend",
             "transition": "transitionend"
-        }[cssPrefixedNames["transition"]];
+        }[cssPrefixedNames.transition];
 
     function random(min, max, deviation) {
         if (deviation) {
@@ -84,19 +85,19 @@ var Snowfall = (function(window, document, undefined) {
         visibilityChange = "webkitvisibilitychange";
     };
 
-    window.addEventListener("resize", function() {
+    window.addEventListener("resize", function () {
         winHeight = window.innerHeight;
         winWidth = window.innerWidth;
     }, false);
 
-    return function(options) {
+    return function (newOptions) {
 
         var _ = this,
             queue = [],
             options = defaultOptions,
-            isImage, cntLength, $snowflake;
+            isImage, cntLength, $snowflake, timer;
 
-        _.config = function(newOptions) {
+        _.config = function (newOptions) {
             extend(options, newOptions);
 
             isImage = options.type == "image";
@@ -107,7 +108,7 @@ var Snowfall = (function(window, document, undefined) {
             $snowflake.dataset.type = options.type;
         };
 
-        _.config(options);
+        _.config(newOptions);
 
         function Snowflake() {
             var _$snowflake = $snowflake.cloneNode();
@@ -136,16 +137,27 @@ var Snowfall = (function(window, document, undefined) {
                 _$snowflake = new Snowflake();
             };
 
-            setStyle(_$snowflake, {
-                "left": left + "px",
+            var styleRules = {
                 "top": top + "px",
+                "left": left + "px",
                 "opacity": opacity,
-                "width": size + "px",
-                "height": size + "px",
-                "font-size": size + "px",
                 "transform": "none",
                 "transition": duration + "ms linear"
-            });
+            };
+
+            switch (options.type) {
+            case "solid":
+                styleRules.width = styleRules.height = size + "px";
+                break;
+            case "text":
+                styleRules["font-size"] = size + "px";
+                break;
+            case "image":
+                styleRules.width = size + "px";
+                break;
+            };
+
+            setStyle(_$snowflake, styleRules);
 
             function removeFlake() {
                 _$snowflake.removeEventListener(transitionendEventName, removeFlake, false);
@@ -156,7 +168,7 @@ var Snowfall = (function(window, document, undefined) {
 
             $body.appendChild(_$snowflake);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 setStyle(_$snowflake, {
                     "transform": "translate(" + translateX + "px," + translateY + "px) rotate(" + angle + "deg)",
                     "opacity": options.fadeOut ? 0 : opacity
@@ -166,20 +178,20 @@ var Snowfall = (function(window, document, undefined) {
 
         _.playing = 0;
 
-        _.play = function() {
+        _.play = function () {
             if (_.playing) return;
             timer = setInterval(snowAnimate, options.interval);
             _.playing = 1;
         };
 
-        _.stop = function() {
+        _.stop = function () {
             if (!_.playing) return;
             clearInterval(timer);
             timer = null;
             _.playing = 0;
         };
 
-        document.addEventListener(visibilityChange, function() {
+        document.addEventListener(visibilityChange, function () {
             document[hidden] ? _.stop() : _.play();
         }, false);
 
