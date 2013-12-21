@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Snowfall.js</title>
+<link rel="stylesheet" href="snowfall.css" />
+<style>
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    background: #C9151E url(bg.jpg) no-repeat 50% 100%;
+}
+
+#wrapper {
+    margin-top: 200px;
+    color: #fff;
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+</style>
+</head>
+<body>
+
+<div id="wrapper">
+	<h1>Snowfall.js</h1>
+	<p>Let It Snow! On any page with CSS3 transforms and transitions.</p>
+	
+	<button id="solid">Solid</button>
+	<button id="text">Text</button>
+	<button id="image">Images</button>
+	
+	<button id="play">Play</button>
+	<button id="stop">Stop</button>
+</div>
+
+<script src="snowfall.js"></script>
+<script>
+var snow = new Snowfall();
+
+document.getElementById("solid").onclick = function() {
+    snow.config({
+        type: "solid",
+        minSize: 3,
+        maxSize: 10
+    });
+};
+
+document.getElementById("text").onclick = function() {
+    snow.config({
+        type: "text",
+        content: ["*", "&#10052", "&#10053", "&#10054"],
+        minSize: 10,
+        maxSize: 30
+    });
+};
+
+document.getElementById("image").onclick = function() {
+    snow.config({
+        type: "image",
+        content: ["http://bbs.pcbeta.com/static/image/pcbeta/logo_s.png", "http://img.t.sinajs.cn/t35/style/images/logostandard/groups1.png"],
+        minSize: 10,
+        maxSize: 30
+    });
+};
+
+document.getElementById("play").onclick = snow.play;
+document.getElementById("stop").onclick = snow.stop;
+</script>
+</body>
+</html>
