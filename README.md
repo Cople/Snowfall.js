@@ -3,16 +3,10 @@ Snowfall.js
 
 Let It Snow... on any page with CSS3 transforms and transitions in modern browsers.
 
-## Example ##
-[Demo](https://github.com/Cople/Snowfall.js)
+## Demo ##
+http://cople.github.io/Snowfall.js/
 
 ## Usage ##
-
-```html
-<link rel="stylesheet" href="snowfall.css" />
-<script src="snowfall.js"></script>
-```
-
 ```javascript
 var snow = new Snowfall();
 ```
@@ -27,7 +21,7 @@ var snow = new Snowfall({
 
 ## Functions ##
 ```javascript
-snow.config({});
+snow.config({/* options */});
 snow.play();
 snow.stop();
 ```
