@@ -1,13 +1,11 @@
 /*!
- * Snowfall.js v1.0 (http://cople.github.io/Snowfall.js/)
+ * Snowfall.js v1.1 (http://cople.github.io/Snowfall.js/)
  */
-
-var Snowfall = (function (window, document, undefined) {
+(function(window, document, undefined) {
 
     "use strict";
 
-    var $body = document.body,
-        winWidth = window.innerWidth,
+    var winWidth = window.innerWidth,
         winHeight = window.innerHeight,
         defaultOptions = {
             minSize: 10,
@@ -36,9 +34,9 @@ var Snowfall = (function (window, document, undefined) {
     };
 
     var cssPrefixedNames = {
-        "transform": cssPrefix("transform"),
-        "transition": cssPrefix("transition")
-    },
+            "transform": cssPrefix("transform"),
+            "transition": cssPrefix("transition")
+        },
         transitionendEventName = {
             "WebkitTransition": "webkitTransitionEnd",
             "OTransition": "oTransitionEnd",
@@ -85,19 +83,20 @@ var Snowfall = (function (window, document, undefined) {
         visibilityChange = "webkitvisibilitychange";
     };
 
-    window.addEventListener("resize", function () {
+    window.addEventListener("resize", function() {
         winHeight = window.innerHeight;
         winWidth = window.innerWidth;
     }, false);
 
-    return function (newOptions) {
+    function Snowfall(newOptions) {
 
         var _ = this,
             queue = [],
             options = defaultOptions,
+            $snowfield = document.createElement("div"),
             isImage, cntLength, $snowflake, timer;
 
-        _.config = function (newOptions) {
+        _.config = function(newOptions) {
             extend(options, newOptions);
 
             isImage = options.type == "image";
@@ -146,60 +145,62 @@ var Snowfall = (function (window, document, undefined) {
             };
 
             switch (options.type) {
-            case "solid":
-                styleRules.width = styleRules.height = size + "px";
-                break;
-            case "text":
-                styleRules["font-size"] = size + "px";
-                break;
-            case "image":
-                styleRules.width = size + "px";
-                break;
+                case "solid":
+                    styleRules.width = styleRules.height = size + "px";
+                    break;
+                case "text":
+                    styleRules["font-size"] = size + "px";
+                    break;
+                case "image":
+                    styleRules.width = size + "px";
+                    break;
             };
 
             setStyle(_$snowflake, styleRules);
 
-            function removeFlake() {
-                _$snowflake.removeEventListener(transitionendEventName, removeFlake, false);
-                $body.removeChild(_$snowflake);
-                queue.push(_$snowflake);
-            };
-            _$snowflake.addEventListener(transitionendEventName, removeFlake, false);
+            $snowfield.appendChild(_$snowflake);
 
-            $body.appendChild(_$snowflake);
-
-            setTimeout(function () {
+            setTimeout(function() {
                 setStyle(_$snowflake, {
                     "transform": "translate(" + translateX + "px," + translateY + "px) rotate(" + angle + "deg)",
                     "opacity": options.fadeOut ? 0 : opacity
                 });
-            }, 10);
+            }, 100);
         };
 
         _.playing = 0;
 
-        _.play = function () {
+        _.play = function() {
             if (_.playing) return;
             timer = setInterval(snowAnimate, options.interval);
             _.playing = 1;
         };
 
-        _.stop = function () {
+        _.stop = function() {
             if (!_.playing) return;
             clearInterval(timer);
             timer = null;
             _.playing = 0;
         };
 
-        document.addEventListener(visibilityChange, function () {
+        document.addEventListener(visibilityChange, function() {
             document[hidden] ? _.stop() : _.play();
         }, false);
+
+        $snowfield.addEventListener(transitionendEventName, function(e) {
+            var snowflake = e.target || e.srcElement;
+            $snowfield.removeChild(snowflake);
+            queue.push(snowflake);
+        }, false);
+
+        $snowfield.className = "snowfield";
+        document.body.appendChild($snowfield);
 
         options.autoplay && _.play();
 
         return _;
     };
 
-})(window, document);
+    window.Snowfall = Snowfall;
 
-window.Snowfall = Snowfall;
+})(window, document);
